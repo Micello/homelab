@@ -1,0 +1,10 @@
+[Unit]
+Description=AWS S3 Homelab Backup
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/simo/docker/aws-backup
+ExecStart=/usr/bin/docker compose run --rm backup

@@ -1,0 +1,10 @@
+services:
+  backup:
+    image: aws-backup:latest
+    build: .
+    volumes:
+      - /home/simo/Drive/Drive1/CloudBackupTest:/data:ro
+      - /home/simo/.aws:/root/.aws:ro
+    environment:
+      AWS_DEFAULT_REGION: eu-north-1
+      DESTINATION: ${DESTINATION}
