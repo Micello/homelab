@@ -7,4 +7,4 @@ Requires=docker.service
 [Service]
 Type=oneshot
 WorkingDirectory=/home/simo/homelab/services/aws-backup
-ExecStart=/usr/bin/docker compose run --rm --no-build backup
+ExecStart=/usr/bin/docker compose run --rm backup
