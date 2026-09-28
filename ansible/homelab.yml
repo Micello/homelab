@@ -29,7 +29,50 @@
         enabled: true
         state: started
 
+    - name: Ensure Docker packages are installed
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - docker-compose
+          - docker-buildx
+        state: present
+
+    - name: Ensure Docker service is enabled and running
+      ansible.builtin.systemd_service:
+        name: docker
+        enabled: true
+        state: started
+
+    - name: Ensure simo is in the docker group
+      ansible.builtin.user:
+        name: simo
+        groups: docker
+        append: true
+
+    - name: Ensure homelab services directory exists
+      ansible.builtin.file:
+        path: /home/simo/homelab/services
+        state: directory
+        owner: simo
+        group: simo
+        mode: "0755"
+
+    - name: Ensure Navidrome data directory exists
+      ansible.builtin.file:
+        path: /home/simo/docker/navidrome/data
+        state: directory
+        owner: simo
+        group: simo
+        mode: "0755"
+
+    - name: Ensure homelab Docker services are running
+      community.docker.docker_compose_v2:
+        project_src: /home/simo/homelab/services
+        state: present
+      become_user: simo
+      
   handlers:
     - name: Reload NFS exports
       ansible.builtin.command:
         cmd: exportfs -ra
+
