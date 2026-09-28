@@ -70,9 +70,35 @@
         project_src: /home/simo/homelab/services
         state: present
       become_user: simo
-      
+
+    - name: Deploy AWS backup systemd service
+      ansible.builtin.copy:
+        src: systemd/aws-backup.service
+        dest: /etc/systemd/system/aws-backup.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload systemd
+
+    - name: Deploy AWS backup systemd timer
+      ansible.builtin.copy:
+        src: systemd/aws-backup.timer
+        dest: /etc/systemd/system/aws-backup.timer
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload systemd
+
+    - name: Ensure AWS backup timer is enabled and running
+      ansible.builtin.systemd_service:
+        name: aws-backup.timer
+        enabled: true
+        state: started
+
   handlers:
     - name: Reload NFS exports
       ansible.builtin.command:
         cmd: exportfs -ra
-
+    - name: Reload systemd
+      ansible.builtin.systemd_service:
+        daemon_reload: true
